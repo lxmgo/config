@@ -1,6 +1,7 @@
 # config
 
 Package config is a Configuration file parser for INI format
+
 包 config 是一个简洁方的,支持注释的Go语言配置文件解析器,类似于Windows下的INI文件.
 
 配置文件形式为`[section]` 的段构成, 内部使用 `name=value`键值对
