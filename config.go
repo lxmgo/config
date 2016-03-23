@@ -15,6 +15,7 @@ import (
 var (
 	DEFAULT_SECTION = "default"
 	DEFAULT_COMMENT = []byte{'#'}
+	DEFAULT_COMMENT_SEM = []byte{';'}
 )
 
 type ConfigInterface interface {
@@ -28,11 +29,14 @@ type ConfigInterface interface {
 }
 
 type Config struct {
-	data map[string]map[string]string
+	// map is not safe.
 	sync.RWMutex
+	// Section:key=value
+	data map[string]map[string]string
+
 }
 
-//Create a config
+// NewConfig create an empty configuration representation.
 func NewConfig(confName string) (ConfigInterface, error) {
 	c := &Config{
 		data: make(map[string]map[string]string),
@@ -40,7 +44,7 @@ func NewConfig(confName string) (ConfigInterface, error) {
 	err := c.parse(confName)
 	return c, err
 }
-
+// AddConfig adds a new section->key:value to the configuration.
 func (c *Config) AddConfig(section string, option string, value string) bool {
 	if section == "" {
 		section = DEFAULT_SECTION
@@ -85,10 +89,11 @@ func (c *Config) parse(fname string) (err error) {
 		switch {
 		case bytes.HasPrefix(line, DEFAULT_COMMENT):
 			continue
+		case bytes.HasPrefix(line,DEFAULT_COMMENT_SEM):
+			continue
 		case bytes.HasPrefix(line, []byte{'['}) && bytes.HasSuffix(line, []byte{']'}):
 			section = string(line[1 : len(line)-1])
 		default:
-			fmt.Errorf(string(line))
 			optionVal := bytes.SplitN(line, []byte{'='}, 2)
 			if len(optionVal) != 2 {
 				return fmt.Errorf("parse %s the content error : line %d , %s = ? ", fname, lineNum, optionVal[0])
@@ -154,13 +159,14 @@ func (c *Config) Set(key string, value string) error {
 	return nil
 }
 
+// section.key or key
 func (c *Config) get(key string) string {
 	var (
 		section string
 		option  string
 	)
 
-	keys := strings.Split(strings.ToLower(key), ".")
+	keys := strings.Split(strings.ToLower(key), "::")
 
 	if len(keys) >= 2 {
 		section = keys[0]
