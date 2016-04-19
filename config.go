@@ -147,7 +147,7 @@ func (c *Config) Set(key string, value string) error {
 		option  string
 	)
 
-	keys := strings.Split(strings.ToLower(key), ".")
+	keys := strings.Split(strings.ToLower(key), "::")
 	if len(keys) >= 2 {
 		section = keys[0]
 		option = keys[1]
