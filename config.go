@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	DEFAULT_SECTION = "default"
-	DEFAULT_COMMENT = []byte{'#'}
+	DEFAULT_SECTION     = "default"
+	DEFAULT_COMMENT     = []byte{'#'}
 	DEFAULT_COMMENT_SEM = []byte{';'}
 )
 
@@ -33,7 +33,6 @@ type Config struct {
 	sync.RWMutex
 	// Section:key=value
 	data map[string]map[string]string
-
 }
 
 // NewConfig create an empty configuration representation.
@@ -44,6 +43,7 @@ func NewConfig(confName string) (ConfigInterface, error) {
 	err := c.parse(confName)
 	return c, err
 }
+
 // AddConfig adds a new section->key:value to the configuration.
 func (c *Config) AddConfig(section string, option string, value string) bool {
 	if section == "" {
@@ -89,7 +89,7 @@ func (c *Config) parse(fname string) (err error) {
 		switch {
 		case bytes.HasPrefix(line, DEFAULT_COMMENT):
 			continue
-		case bytes.HasPrefix(line,DEFAULT_COMMENT_SEM):
+		case bytes.HasPrefix(line, DEFAULT_COMMENT_SEM):
 			continue
 		case bytes.HasPrefix(line, []byte{'['}) && bytes.HasSuffix(line, []byte{']'}):
 			section = string(line[1 : len(line)-1])
