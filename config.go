@@ -100,7 +100,7 @@ func (c *Config) parse(fname string) (err error) {
 			}
 			option := bytes.TrimSpace(optionVal[0])
 			value := bytes.TrimSpace(optionVal[1])
-			c.AddConfig(section, string(option), string(value))
+			c.AddConfig(section, strings.ToLower(string(option)), string(value))
 		}
 	}
 
